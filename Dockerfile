@@ -4,14 +4,17 @@ FROM node:16
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Install FFmpeg 4.4 or later
-RUN apt-get update && \
-  apt-get install -y software-properties-common && \
-  add-apt-repository ppa:jonathonf/ffmpeg-4 && \
-  apt-get update && \
-  apt-get install -y ffmpeg
+# Install FFmpeg
+RUN apt-get update && apt-get install -y wget \
+  && mkdir /ffmpeg \
+  && cd /ffmpeg \
+  && wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz \
+  && tar xvf ffmpeg-release-amd64-static.tar.xz --strip-components=1 \
+  && mv ffmpeg ffprobe /usr/local/bin/ \
+  && cd /usr/src/app \
+  && rm -rf /ffmpeg
 
-# Verify FFmpeg version
+# Print FFmpeg version
 RUN ffmpeg -version
 
 # Copy package.json and package-lock.json (if available)
