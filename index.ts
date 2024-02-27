@@ -32,7 +32,7 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
   const outputPath = `${fileName}`;
 
   // Construct the ffmpeg command
-  const ffmpegCommand = `ffmpeg -i ${file.path} ${outputPath}`;
+  const ffmpegCommand = `ffmpeg -i ${file.path} -b:a 192k -ar 44100 ${outputPath}`;
 
   exec(ffmpegCommand, (error, stdout, stderr) => {
     if (error) {
