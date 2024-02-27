@@ -32,7 +32,7 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
   const outputPath = `${fileName}`;
 
   // Construct the ffmpeg command
-  const ffmpegCommand = `ffmpeg -i ${file.path} -b:a 192k -ar 44100 ${outputPath}`;
+  const ffmpegCommand = `ffmpeg -i ${file.path} -c:a libmp3lame -b:a 192k -ar 44100 -f mp3 ${outputPath}`;
 
   exec(ffmpegCommand, (error, stdout, stderr) => {
     if (error) {
@@ -43,7 +43,6 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
     // Upload to S3
     const bucketName = process.env.AWS_S3_BUCKET;
     const key = path.basename(outputPath);
-
     fs.readFile(outputPath, async (err, data) => {
       if (err) {
         console.error('Read file error:', err);
