@@ -22,13 +22,13 @@ RUN apt-get update && \
   tar
 
 # Download FFmpeg 5.1.4
-RUN wget https://ffmpeg.org/releases/ffmpeg-5.1.4.tar.xz
+RUN wget https://ffmpeg.org/releases/ffmpeg-4.4.4.tar.xz
 
 # Extract FFmpeg
-RUN tar xf ffmpeg-5.1.4.tar.xz
+RUN tar xf ffmpeg-4.4.4.tar.xz
 
 # Build FFmpeg
-RUN cd ffmpeg-5.1.4 && \
+RUN cd ffmpeg-4.4.4 && \
   ./configure \
   --enable-gpl \
   --enable-libx264 \
@@ -42,7 +42,7 @@ RUN cd ffmpeg-5.1.4 && \
   make install
 
 # Clean up the tar file and build directory
-RUN rm -rf ffmpeg-5.1.4.tar.xz ffmpeg-5.1.4
+RUN rm -rf ffmpeg-4.4.4.tar.xz ffmpeg-4.4.4
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
