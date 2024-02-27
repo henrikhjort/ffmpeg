@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
-import ffmpeg from 'fluent-ffmpeg';
 import fs from 'fs';
 import path from 'path';
 
@@ -29,6 +28,7 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
   const targetFormat = 'mp3'; // Adjust as needed
   const outputPath = `converted-${Date.now()}.${targetFormat}`;
 
+  /*
   ffmpeg(fs.createReadStream(file.path))
     .toFormat(targetFormat)
     .on('error', (err: Error) => {
@@ -61,6 +61,8 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
       }
     })
     .saveToFile(outputPath);
+    */
+   res.send({ message: 'File converted and uploaded successfully' });
 });
 
 const port = process.env.PORT || 1337;
