@@ -18,11 +18,13 @@ const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 app.post('/convert', upload.single('file'), async (req: Request, res: Response) => {
+  console.log('IM ALIVE');
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
 
   const file = req.file;
+  const fileName = req.body.fileName;
   console.log('File uploaded:', file);
   const targetFormat = 'mp3'; // Adjust as needed
   const outputPath = `converted-${Date.now()}.${targetFormat}`;
