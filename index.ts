@@ -25,9 +25,8 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
 
   const file = req.file;
   const fileName = req.body.fileName;
-  console.log('File uploaded:', file);
   const targetFormat = 'mp3'; // Adjust as needed
-  const outputPath = `converted-${Date.now()}.${targetFormat}`;
+  const outputPath = `${fileName}`;
 
   // Construct the ffmpeg command
   const ffmpegCommand = `ffmpeg -i ${file.path} ${outputPath}`;
