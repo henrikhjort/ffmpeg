@@ -19,6 +19,7 @@ COPY . .
 
 # Your app binds to port 1337, make sure the container does too
 EXPOSE 1337
+EXPOSE 6774
 
 # Define the command to run your app
 CMD [ "npm", "start" ]
