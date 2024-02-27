@@ -14,12 +14,20 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
+# If you're using TypeScript, install TypeScript and types globally (optional)
+# This step is not strictly necessary if you're running the TypeScript compiler via an npm script
+# RUN npm install -g typescript
+
 # Bundle app source
 COPY . .
 
+# Compile TypeScript to JavaScript
+RUN npm run build
+
 # Your app binds to port 1337, make sure the container does too
+# If 6774 is not used by your application, you don't need to expose it
 EXPOSE 1337
-EXPOSE 6774
 
 # Define the command to run your app
+# Ensure your package.json's "start" script points to the compiled JavaScript output, e.g., node dist/index.js
 CMD [ "npm", "start" ]
