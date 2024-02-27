@@ -4,9 +4,9 @@ FROM node:16
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Install build dependencies for FFmpeg
-RUN apt-get update && \
-  apt-get install -y \
+# Install build dependencies for FFmpeg and handle potential errors
+RUN apt-get update -qq && \
+  apt-get install -y --no-install-recommends \
   build-essential \
   yasm \
   nasm \
@@ -19,15 +19,13 @@ RUN apt-get update && \
   libmp3lame-dev \
   libopus-dev \
   wget \
-  tar
+  tar || exit 1
 
-# Download FFmpeg 5.1.4
-RUN wget https://ffmpeg.org/releases/ffmpeg-4.4.4.tar.xz
+# Download and extract FFmpeg 4.4
+RUN wget https://ffmpeg.org/releases/ffmpeg-4.4.4.tar.xz && \
+  tar xf ffmpeg-4.4.4.tar.xz
 
-# Extract FFmpeg
-RUN tar xf ffmpeg-4.4.4.tar.xz
-
-# Build FFmpeg
+# Build FFmpeg from source
 RUN cd ffmpeg-4.4.4 && \
   ./configure \
   --enable-gpl \
@@ -41,20 +39,20 @@ RUN cd ffmpeg-4.4.4 && \
   make -j$(nproc) && \
   make install
 
-# Clean up the tar file and build directory
+# Clean up the downloaded and extracted files to keep the image size down
 RUN rm -rf ffmpeg-4.4.4.tar.xz ffmpeg-4.4.4
 
-# Copy package.json and package-lock.json (if available)
+# Copy the package.json and package-lock.json (if available)
 COPY package*.json ./
 
-# Install project dependencies
+# Install the project dependencies
 RUN npm install
 
-# Bundle app source
+# Copy the rest of your application's source code
 COPY . .
 
-# Expose the port your app runs on
+# Expose the port your app will run on
 EXPOSE 1337
 
 # Define the command to run your app
-CMD [ "npm", "start" ]
+CMD ["npm", "start"]
