@@ -4,9 +4,45 @@ FROM node:16
 # Set the working directory
 WORKDIR /usr/src/app
 
-# Install ffmpeg
+# Install build dependencies for FFmpeg
 RUN apt-get update && \
-  apt-get install -y ffmpeg
+  apt-get install -y \
+  build-essential \
+  yasm \
+  nasm \
+  pkg-config \
+  libx264-dev \
+  libx265-dev \
+  libnuma-dev \
+  libvpx-dev \
+  libfdk-aac-dev \
+  libmp3lame-dev \
+  libopus-dev \
+  wget \
+  tar
+
+# Download FFmpeg 5.1.4
+RUN wget https://ffmpeg.org/releases/ffmpeg-5.1.4.tar.xz
+
+# Extract FFmpeg
+RUN tar xf ffmpeg-5.1.4.tar.xz
+
+# Build FFmpeg
+RUN cd ffmpeg-5.1.4 && \
+  ./configure \
+  --enable-gpl \
+  --enable-libx264 \
+  --enable-libx265 \
+  --enable-libvpx \
+  --enable-libfdk-aac \
+  --enable-libmp3lame \
+  --enable-libopus \
+  --enable-nonfree && \
+  make -j$(nproc) && \
+  make install
+
+# Clean up the tar file and build directory
+RUN rm -rf ffmpeg-5.1.4.tar.xz ffmpeg-5.1.4
 
 # Copy package.json and package-lock.json (if available)
 COPY package*.json ./
@@ -14,20 +50,11 @@ COPY package*.json ./
 # Install project dependencies
 RUN npm install
 
-# If you're using TypeScript, install TypeScript and types globally (optional)
-# This step is not strictly necessary if you're running the TypeScript compiler via an npm script
-# RUN npm install -g typescript
-
 # Bundle app source
 COPY . .
 
-# Compile TypeScript to JavaScript
-RUN npm run build
-
-# Your app binds to port 1337, make sure the container does too
-# If 6774 is not used by your application, you don't need to expose it
+# Expose the port your app runs on
 EXPOSE 1337
 
 # Define the command to run your app
-# Ensure your package.json's "start" script points to the compiled JavaScript output, e.g., node dist/index.js
 CMD [ "npm", "start" ]
