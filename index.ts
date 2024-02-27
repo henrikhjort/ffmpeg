@@ -18,14 +18,17 @@ const app = express();
 const upload = multer({ dest: 'uploads/' });
 
 app.post('/convert', upload.single('file'), async (req: Request, res: Response) => {
-  console.log('IM ALIVE');
+  // Check for api key in headers.
+  const apiKey = req.headers['x-api-key'];
+  if (!apiKey || apiKey !== process.env.API_KEY) {
+    return res.status(401).send('Unauthorized');
+  }
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
 
   const file = req.file;
   const fileName = req.body.fileName;
-  const targetFormat = 'mp3'; // Adjust as needed
   const outputPath = `${fileName}`;
 
   // Construct the ffmpeg command
@@ -36,10 +39,6 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
       console.error(`exec error: ${error}`);
       return res.status(500).send('Conversion error');
     }
-
-    // Output handling
-    console.log(`stdout: ${stdout}`);
-    console.error(`stderr: ${stderr}`);
 
     // Upload to S3
     const bucketName = process.env.AWS_S3_BUCKET;
