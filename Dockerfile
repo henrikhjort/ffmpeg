@@ -1,7 +1,4 @@
-FROM node:16
-
-# Set the working directory
-WORKDIR /usr/src/app
+FROM node:18
 
 # Install ffmpeg
 RUN apt-get update && \
