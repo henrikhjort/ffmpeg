@@ -1,20 +1,23 @@
-FROM node:18
+# Use an official Node.js runtime as a parent image
+FROM node:latest
 
-# Install ffmpeg
-RUN apt-get update && \
-  apt-get install -y ffmpeg
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package.json and package-lock.json (if available) to the working directory
 COPY package*.json ./
 
-# Install project dependencies
+# Install any dependencies
 RUN npm install
 
-# Bundle app source
+# Copy the rest of your application's source code from your host to your image filesystem.
 COPY . .
 
-# Your app binds to port 1337, make sure the container does too
-EXPOSE 1337
+# Build your TypeScript files
+RUN npm run build
 
-# Define the command to run your app
-CMD [ "npm", "start" ]
+# Inform Docker that the container is listening on the specified port at runtime.
+EXPOSE 3000
+
+# Define the command to run your app using CMD which defines your runtime
+CMD ["node", "dist/index.js"]
