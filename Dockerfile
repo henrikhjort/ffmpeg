@@ -4,6 +4,9 @@ FROM node:latest
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
+RUN apt-get update && \
+  apt-get install -y ffmpeg
+
 # Copy package.json and package-lock.json (if available) to the working directory
 COPY package*.json ./
 
