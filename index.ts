@@ -32,7 +32,7 @@ app.post('/convert', upload.single('file'), async (req: Request, res: Response) 
   const outputPath = `${fileName}`;
 
   // Construct the ffmpeg command
-  const ffmpegCommand = `ffmpeg -i ${file.path} -c:a libmp3lame -b:a 192k -ar 44100 -f mp3 ${outputPath}`;
+  const ffmpegCommand = `ffmpeg -i ${file.path} -c:a libmp3lame -b:a 320k -ar 44100 -f mp3 ${outputPath}`;
 
   exec(ffmpegCommand, (error, stdout, stderr) => {
     if (error) {
